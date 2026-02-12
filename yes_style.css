@@ -4,21 +4,98 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #f9e3e3;
+    background-image: url('hearts-background-4.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     font-family: 'Arial', sans-serif;
 }
 
 .container {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.text-modal {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px 50px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.image-modal {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .header_text {
     font-size: 3em;
     color: #d32f2f;
+    margin: 0;
 }
 
-.gif_container img {
+.scene {
+    width: 400px;
+    margin: auto;
+}
+
+.couple {
+    width: 100%;
+    animation: kissAnim 2.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+.scene img {
     width: 100%; 
     max-width: 500px; 
-    height: auto; 
+    height: auto;
+    border-radius: 10px;
+}
+
+@keyframes kissAnim {
+    0% {
+        transform: translateX(0px);
+    }
+
+    /* Lean in */
+    25% {
+        transform: translateX(-12px);
+    }
+
+    /* Kiss moment */
+    40% {
+        transform: translateX(-18px) scale(1.02);
+    }
+
+    /* Lean back */
+    70% {
+        transform: translateX(-5px);
+    }
+
+    100% {
+        transform: translateX(0px);
+    }
+}
+
+.music-player {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.music-player audio {
+    width: 100%;
+    max-width: 250px;
 }

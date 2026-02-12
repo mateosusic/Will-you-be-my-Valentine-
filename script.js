@@ -68,6 +68,44 @@ const messages = [
 
 let messageIndex = 0;
 
+function triggerScreenShake() {
+    const body = document.body;
+    body.classList.add('shake');
+    setTimeout(() => {
+        body.classList.remove('shake');
+    }, 500);
+}
+
+function createFloatingHeart() {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.textContent = '❤️';
+    heart.style.left = Math.random() * 100 + '%';
+    const duration = Math.random() * 2 + 2;
+    heart.style.animationDuration = duration + 's';
+    document.querySelector('.hearts-background').appendChild(heart);
+    setTimeout(() => heart.remove(), duration * 1000);
+}
+
+function startHeartAnimation() {
+    setInterval(createFloatingHeart, 300);
+}
+
+function triggerConfetti() {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
+    setTimeout(() => {
+        confetti({
+            particleCount: 50,
+            spread: 100,
+            origin: { y: 0.6 }
+        });
+    }, 250);
+}
+
 function handleNoClick() {
     const noButton = document.querySelector('.no-button');
     const yesButton = document.querySelector('.yes-button');
@@ -75,8 +113,14 @@ function handleNoClick() {
     messageIndex = (messageIndex + 1) % messages.length;
     const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
     yesButton.style.fontSize = `${currentSize * 1.5}px`;
+    triggerScreenShake();
 }
 
 function handleYesClick() {
-    window.location.href = "yes_page.html";
+    triggerConfetti();
+    setTimeout(() => {
+        window.location.href = "yes_page.html";
+    }, 500);
 }
+
+startHeartAnimation();

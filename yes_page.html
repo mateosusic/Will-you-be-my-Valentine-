@@ -3,14 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knew you would say yes!</title>
+    <title>Forever with you! 💕</title>
     <link rel="stylesheet" href="./yes_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes rainHearts {
+            0% {
+                top: -10vh;
+                opacity: 1;
+            }
+            100% {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+
+        .falling-heart {
+            position: fixed;
+            font-size: 2em;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
+    <script>
+        function createFallingHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('falling-heart');
+            heart.textContent = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            const duration = Math.random() * 3 + 3;
+            heart.style.animation = `rainHearts ${duration}s linear forwards`;
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), duration * 1000);
+        }
+
+        function startHeartRain() {
+            setInterval(createFallingHeart, 200);
+        }
+
+        window.addEventListener('load', () => {
+            startHeartRain();
+        });
+    </script>
+
+    <!-- Music Player -->
+    <div class="music-player">
+        <audio id="background-music" autoplay muted>
+            <source src="Baby, I Love Your Way.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <script>
+        // Unmute and play music after user interaction
+        const audio = document.getElementById('background-music');
+        function playMusic() {
+            audio.muted = false;
+            audio.play().catch(e => console.log('Autoplay prevented, waiting for user interaction'));
+            document.body.removeEventListener('click', playMusic);
+            document.body.removeEventListener('touchstart', playMusic);
+        }
+        document.body.addEventListener('click', playMusic);
+        document.body.addEventListener('touchstart', playMusic);
+        setTimeout(() => {
+            audio.muted = false;
+            audio.play().catch(e => console.log('Autoplay prevented'));
+        }, 500);
+    </script>
     <div class="container">
-        <h1 class="header_text">Knew you would say yes!</h1>
-        <div class="gif_container">
-            <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmo3c3l5ODh3ZGN6NHhhaDE2Mjg1ZjkwOXczdDFxbWM3dTBtaW9zaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/9XY4f3FgFTT4QlaYqa/giphy.gif">
+        <div class="text-modal">
+            <h1 class="header_text">Fernanda, you're my everything. Happy Valentine's to my greatest adventure, and I promise to love you always 💕</h1>
+        </div>
+        <div class="image-modal">
+            <div class="scene">
+                <div class="couple">
+                    <img src="ChatGPT_Image_Feb_12__2026__11_56_06_AM-removebg-preview.png" alt="ChatGPT">
+                </div>
+            </div>
         </div>
     </div>
 </body>

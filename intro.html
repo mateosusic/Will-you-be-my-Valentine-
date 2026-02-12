@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Envelope</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-5px, -5px); }
+            20%, 40%, 60%, 80% { transform: translate(5px, 5px); }
+        }
+
+        @keyframes fadeInHeart {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-100vh) scale(1); }
+        }
+
+        body {
+            background-image: url('hearts-background-4.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.shake {
+            animation: shake 0.5s;
+        }
+
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 2em;
+            color: #ff69b4;
+            animation: fadeInHeart linear forwards;
+            opacity: 0;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 220px;
+            height: 150px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+
+        .envelope-container:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffb6c1;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .flap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ff9eb5;
+            clip-path: polygon(0 0, 50% 55%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .heart-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            font-size: 30px;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .letter {
+            position: absolute;
+            width: 90%;
+            height: 120%;
+            background: #fff;
+            border-radius: 6px;
+            top: 100%;
+            left: 5%;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            transition: top 0.6s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .open .flap {
+            transform: rotateX(180deg);
+        }
+
+        .open .letter {
+            top: -60%;
+        }
+
+        .letter h3 {
+            color: #ff4d88;
+            margin-bottom: 10px;
+        }
+
+        .letter p {
+            color: #444;
+            margin: 0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h1 {
+            color: #d32f2f;
+            font-size: 2.5em;
+            margin: 0 0 30px 0;
+        }
+
+        .modal-content p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .yes-button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+        
+        .yes-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .yes-button:active {
+            transform: scale(0.98);
+        }
+        
+        .no-button {
+            font-size: 1.5em;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: scale(1);
+        }
+
+        .no-button:hover {
+            background-color: #da190b;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+        }
+
+        .no-button:active {
+            transform: scale(0.98);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="envelope-container" onclick="openEnvelope(this)">
+    <div class="envelope">
+        <div class="flap"></div>
+        <div class="heart-seal">💖</div>
+        <div class="letter">
+            <h3>For You 💌</h3>
+            <p>Click to open...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for the question -->
+<div id="questionModal" class="modal">
+    <div class="modal-content">
+        <h1>Fernanda,<br>Will you be my Valentine?</h1>
+        <div class="buttons">
+            <button class="yes-button" onclick="handleYesClick()">Yes</button>
+            <button class="no-button" onclick="handleNoClick()">No</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Messages for the No button
+    const messages = [
+        "Are you sure?",
+        "Really sure??",
+        "Are you positive?",
+        "Pookie please...",
+        "Just think about it!",
+        "If you say no, I will be really sad...",
+        "I will be very sad...",
+        "I will be very very very sad...",
+        "Ok fine, I will stop asking...",
+        "Just kidding, say yes please! ❤️"
+    ];
+
+    let messageIndex = 0;
+
+    function triggerScreenShake() {
+        const body = document.body;
+        body.classList.add('shake');
+        setTimeout(() => {
+            body.classList.remove('shake');
+        }, 500);
+    }
+
+    function createFloatingHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.textContent = '❤️';
+        heart.style.left = Math.random() * 100 + '%';
+        const duration = Math.random() * 2 + 2;
+        heart.style.animationDuration = duration + 's';
+        // Create hearts-background container if it doesn't exist
+        let bg = document.querySelector('.hearts-background');
+        if (!bg) {
+            bg = document.createElement('div');
+            bg.classList.add('hearts-background');
+            document.body.insertBefore(bg, document.body.firstChild);
+        }
+        bg.appendChild(heart);
+        setTimeout(() => heart.remove(), duration * 1000);
+    }
+
+    function startHeartAnimation() {
+        setInterval(createFloatingHeart, 300);
+    }
+
+    function triggerConfetti() {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+        setTimeout(() => {
+            confetti({
+                particleCount: 50,
+                spread: 100,
+                origin: { y: 0.6 }
+            });
+        }, 250);
+    }
+
+    function handleNoClick() {
+        const noButton = document.querySelector('.no-button');
+        const yesButton = document.querySelector('.yes-button');
+        noButton.textContent = messages[messageIndex];
+        messageIndex = (messageIndex + 1) % messages.length;
+        const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+        yesButton.style.fontSize = `${currentSize * 1.5}px`;
+        triggerScreenShake();
+    }
+
+    function handleYesClick() {
+        triggerConfetti();
+        setTimeout(() => {
+            window.location.href = "yes_page.html";
+        }, 500);
+    }
+
+    function openEnvelope(el) {
+        el.classList.toggle("open");
+        // Show modal after envelope opens
+        if (el.classList.contains("open")) {
+            setTimeout(() => {
+                document.getElementById("questionModal").classList.add("show");
+            }, 600);
+        }
+    }
+
+    // Start heart animation and version check when page loads
+    window.addEventListener('load', () => {
+        startHeartAnimation();
+    });
+
+    // Check for updates
+    (async function checkForUpdates() {
+        const currentVersion = "1.0";
+        const versionUrl = "https://raw.githubusercontent.com/ivysone/Will-you-be-my-Valentine-/main/version.json";
+
+        try {
+            const response = await fetch(versionUrl);
+            if (!response.ok) {
+                console.warn("Could not fetch version information.");
+                return;
+            }
+            const data = await response.json();
+            const latestVersion = data.version;
+            const updateMessage = data.updateMessage;
+
+            if (currentVersion !== latestVersion) {
+                alert(updateMessage);
+            } else {
+                console.log("You are using the latest version.");
+            }
+        } catch (error) {
+            console.error("Error checking for updates:", error);
+        }
+    })();
+</script>
+
+</body>
+</html>
